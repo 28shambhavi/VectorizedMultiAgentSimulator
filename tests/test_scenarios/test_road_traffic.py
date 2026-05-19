@@ -46,8 +46,7 @@ class TestRoadTraffic:
         self.setup_env(n_envs=n_envs, map_type="2")
         self.env.reset()
         actions = [
-            torch.zeros(n_envs, agent.action.action_size)
-            for agent in self.env.agents
+            torch.zeros(n_envs, agent.action.action_size) for agent in self.env.agents
         ]
         self.env.step(actions)
         self._seed_buffer(device="cpu")
