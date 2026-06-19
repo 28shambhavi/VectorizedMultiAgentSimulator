@@ -12,7 +12,28 @@ If you have more than 1 agent, you can control another one with W,A,S,D
 and switch the agent with these controls using LSHIFT
 """
 
-from argparse import ArgumentParser, BooleanOptionalAction
+from argparse import ArgumentParser
+
+try:
+    from argparse import BooleanOptionalAction
+except ImportError:  # Python < 3.9
+    import argparse
+
+    class BooleanOptionalAction(argparse.Action):
+        def __init__(self, option_strings, dest, default=None, type=None,
+                     choices=None, required=False, help=None, metavar=None):
+            _option_strings = []
+            for opt in option_strings:
+                _option_strings.append(opt)
+                if opt.startswith("--"):
+                    _option_strings.append(f"--no-{opt[2:]}")
+            super().__init__(option_strings=_option_strings, dest=dest,
+                             nargs=0, default=default, type=type,
+                             choices=choices, required=required,
+                             help=help, metavar=metavar)
+
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, not option_string.startswith("--no-"))
 from operator import add
 from typing import Dict, Union
 
